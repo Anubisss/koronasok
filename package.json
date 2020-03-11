@@ -1,0 +1,36 @@
+{
+  "name": "koronasok",
+  "version": "1.0.0",
+  "description": "Lambda function that generates content for koronasok.hu which is a website to track infections of Coronavirus disease (COVID-19) in Hungary.",
+  "main": "index.js",
+  "engines": {
+    "node": "12.15.0"
+  },
+  "keywords": [
+    "coronavirus",
+    "covid-19",
+    "hungary"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anubisss/koronasok.git"
+  },
+  "author": "David Vas, anuka <david.vas1@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Anubisss/koronasok",
+  "devDependencies": {
+    "serverless": "^1.66.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.637.0",
+    "ejs": "^3.0.1",
+    "moment-timezone": "^0.5.28",
+    "parse5": "^5.1.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
+    "winston": "^3.2.1"
+  }
+}

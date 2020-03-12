@@ -36,6 +36,8 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.websiteBucketName}
+        VersioningConfiguration:
+          Status: 'Enabled'
         WebsiteConfiguration:
           IndexDocument: 'index.html'
           ErrorDocument: 'index.html'
@@ -54,12 +56,20 @@ resources:
                   -
                     - 'arn:aws:s3:::'
                     - Ref: WebsiteBucket
-                    - '/*'
+                    - '/index.html'
               Principal: '*'
             - Effect: Allow
-              Action: 's3:PutObject'
+              Action:
+                - 's3:GetObject'
+                - 's3:PutObject'
+                - 's3:ListBucket'
               Resource:
-                Fn::Join:
+                - Fn::Join:
+                  - ''
+                  -
+                    - 'arn:aws:s3:::'
+                    - Ref: WebsiteBucket
+                - Fn::Join:
                   - ''
                   -
                     - 'arn:aws:s3:::'

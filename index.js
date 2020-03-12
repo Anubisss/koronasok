@@ -8,12 +8,16 @@ const ejs = require('ejs');
 const moment = require('moment-timezone');
 const AWS = require('aws-sdk');
 
+const HistoricDataManager = require('./historicDataManager');
+
 const HOST_S3_BUCKET_NAME = process.env.HOST_S3_BUCKET_NAME;
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID;
 
 const DATA_URL = 'https://koronavirus.gov.hu/';
 
 const TEMPLATE_PATH = './template.ejs';
+
+const HISTORIC_DATA_FILE_NAME = 'historic-data.json';
 
 const logFormatter = (awsRequestId, options) => {
   const { level, message: msg, ...meta } = options;
@@ -64,9 +68,9 @@ const processData = (data) => {
   }
 
   return {
-    infected,
-    recovered,
-    died,
+    infected: +infected,
+    recovered: +recovered,
+    died: +died,
   };
 };
 
@@ -126,9 +130,9 @@ const renderHtml = (infected, recovered, died) => {
   });
 };
 
-const uploadToS3 = (html) => {
+const uploadToS3 = (s3Client, html) => {
   winston.info('uploadToS3');
-  return new AWS.S3().putObject({
+  return s3Client.putObject({
     Bucket: HOST_S3_BUCKET_NAME,
     Key: 'index.html',
     Body: html,
@@ -153,11 +157,16 @@ const handler = async (event, context) => {
   });
 
   try {
+    const s3Client = new AWS.S3();
+
     const data = await getData();
     const parsedData = parse5.parse(data);
     const processedData = processData(parsedData);
     const html = await renderHtml(processedData.infected, processedData.recovered, processedData.died);
-    await uploadToS3(html);
+    await uploadToS3(s3Client, html);
+
+    const historicDataManager = new HistoricDataManager(s3Client, HOST_S3_BUCKET_NAME, HISTORIC_DATA_FILE_NAME);
+    await historicDataManager.handle(new Date(), processedData.infected, processedData.recovered, processedData.died);
   } catch (err) {
     winston.error('error occured during page generation', err);
     throw err;

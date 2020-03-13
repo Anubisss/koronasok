@@ -137,6 +137,7 @@ const uploadToS3 = (s3Client, html) => {
     Key: 'index.html',
     Body: html,
     ContentType: 'text/html; charset=utf-8',
+    CacheControl: 'public, max-age=1515',
   }).promise();
 };
 

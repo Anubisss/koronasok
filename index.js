@@ -152,9 +152,9 @@ const processDataDied = (data) => {
 const processDiedTbody = (tbody) => {
   winston.info('processDiedTbody');
 
-  const lastRow = tbody.childNodes[tbody.childNodes.length - 2];
+  const lastRow = tbody.childNodes[1];
   if (lastRow.nodeName !== 'tr' || lastRow.tagName !== 'tr' ||
-      lastRow.attrs.length !== 1 || lastRow.attrs[0].value.indexOf('views-row-last') === -1) {
+      lastRow.attrs.length !== 1 || lastRow.attrs[0].value.indexOf('views-row-first') === -1) {
     throw new Error(
       `invalid last row: nodeName: ${lastRow.nodeName}, tagName: ${lastRow.tagName}, ` +
       `attrs: ${util.inspect(lastRow.attrs)}`

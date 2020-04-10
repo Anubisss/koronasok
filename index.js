@@ -22,6 +22,12 @@ const HISTORIC_DATA_FILE_NAME = 'historic-data.json';
 
 const CACHE_TTL = 60;
 
+const REGEX_WHITESPACE = /\s+/g;
+
+const removeWhitespace = (str) => {
+  return str.replace(REGEX_WHITESPACE, '');
+};
+
 const logFormatter = (awsRequestId, options) => {
   const { level, message: msg, ...meta } = options;
 
@@ -111,7 +117,7 @@ const processBlock = (viewContent, blockIndex, label) => {
     throw new Error(`invalid block value properties: nodeName: ${blockValue.nodeName}`);
   }
 
-  return blockValue.value;
+  return removeWhitespace(blockValue.value);
 };
 
 
@@ -172,7 +178,7 @@ const processDiedTbody = (tbody) => {
     throw new Error(`invalid column value properties: nodeName: ${columnValue.nodeName}`);
   }
 
-  return columnValue.value.trim();
+  return removeWhitespace(columnValue.value);
 };
 
 const renderHtml = (infected, recovered, died) => {

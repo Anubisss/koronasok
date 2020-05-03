@@ -2,6 +2,7 @@
 
 const util = require('util');
 const winston = require('winston');
+const wjlf = require('winston-json-log-formatter');
 const request = require('request-promise');
 const parse5 = require('parse5');
 const ejs = require('ejs');
@@ -26,17 +27,6 @@ const REGEX_WHITESPACE = /\s+/g;
 
 const removeWhitespace = (str) => {
   return str.replace(REGEX_WHITESPACE, '');
-};
-
-const logFormatter = (awsRequestId, options) => {
-  const { level, message: msg, ...meta } = options;
-
-  return JSON.stringify({
-    level,
-    msg,
-    meta,
-    awsRequestId,
-  });
 };
 
 const getData = async () => {
@@ -215,10 +205,7 @@ const uploadToS3 = (s3Client, html) => {
 };
 
 const handler = async (event, context) => {
-  winston.remove(winston.transports.Console);
-  winston.add(new winston.transports.Console({
-    format: winston.format.printf(logFormatter.bind(null, context.awsRequestId)),
-  }));
+  wjlf.setupTransport(winston, false, { awsRequestId: context.awsRequestId });
 
   winston.info('starting', {
     nodeEnv: process.env.NODE_ENV,

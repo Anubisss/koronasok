@@ -77,7 +77,7 @@ const processData = (data) => {
 };
 
 const processBlock = (viewContent, blockIndex, label) => {
-  winston.info(`processBlock blockIndex: ${blockIndex}, label: ${label}`);
+  winston.info('processBlock', { blockIndex, label });
 
   const block = viewContent.childNodes[blockIndex].childNodes[1].childNodes[1].childNodes[0];
   if (block.nodeName !== 'div' || block.tagName !== 'div' ||
@@ -172,7 +172,7 @@ const processDiedTbody = (tbody) => {
 };
 
 const renderHtml = (infected, recovered, died) => {
-  winston.info(`renderHtml infected: ${infected}, recovered: ${recovered}, died: ${died}`);
+  winston.info('renderHtml', { infected, recovered, died });
 
   const templateData = {
     infected: infected,

@@ -14,7 +14,7 @@ class HistoricDataManager {
   }
 
   async handle(date, infected, recovered, died) {
-    winston.info(`HistoricDataManager::handle date: ${date}, infected: ${infected}, recovered: ${recovered}, died: ${died}`);
+    winston.info('HistoricDataManager::handle', { date, infected, recovered, died });
 
     let data;
     if (await this.doesDataFileExist()) {
@@ -79,19 +79,24 @@ class HistoricDataManager {
   }
 
   needToAppendData(data, infected, recovered, died) {
-    winston.info(`HistoricDataManager::needToAppendData infected: ${infected}, recovered: ${recovered}, died: ${died}`);
+    winston.info('HistoricDataManager::needToAppendData', { infected, recovered, died });
 
     const lastDataEntry = data[data.length - 1];
     winston.info(
-      `HistoricDataManager::needToAppendData last data entry infected: ${lastDataEntry.infected}, ` +
-      `recovered: ${lastDataEntry.recovered}, died: ${lastDataEntry.died}`
+      'HistoricDataManager::needToAppendData', {
+        lastDataEntry: {
+          infected: lastDataEntry.infected,
+          recovered: lastDataEntry.recovered,
+          died: lastDataEntry.died,
+        },
+      },
     );
 
     return lastDataEntry.infected !== infected || lastDataEntry.recovered !== recovered || lastDataEntry.died !== died;
   }
 
   appendData(data, date, infected, recovered, died) {
-    winston.info(`HistoricDataManager::appendData date: ${date}, infected: ${infected}, recovered: ${recovered}, died: ${died}`);
+    winston.info('HistoricDataManager::appendData', { date, infected, recovered, died });
 
     data.push({
       date,
@@ -102,7 +107,7 @@ class HistoricDataManager {
   }
 
   createData(date, infected, recovered, died) {
-    winston.info(`HistoricDataManager::createData date: ${date}, infected: ${infected}, recovered: ${recovered}, died: ${died}`);
+    winston.info('HistoricDataManager::createData', { date, infected, recovered, died });
 
     return [
       {

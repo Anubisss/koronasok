@@ -27,8 +27,8 @@
   "dependencies": {
     "aws-sdk": "^2.637.0",
     "ejs": "^3.0.1",
+    "jsdom": "^16.2.2",
     "moment-timezone": "^0.5.28",
-    "parse5": "^5.1.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "winston": "^3.2.1",

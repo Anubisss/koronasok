@@ -59,9 +59,11 @@ const getPestAndCountryData = (document, section) => {
 const processData = (document) => {
   winston.info('processData');
 
-  const infected = getPestAndCountryData(document, 'fertozott');
+  const activeInfected = getPestAndCountryData(document, 'fertozott');
   const recovered = getPestAndCountryData(document, 'gyogyult');
   const died = getPestAndCountryData(document, 'elhunyt');
+
+  const infected = activeInfected + recovered + died;
 
   return {
     infected,

@@ -79,15 +79,19 @@
         border-radius: 10px;
       }
 
-      .good {
-        background-color: #00c853;
+      .active-infected {
+        background-color: #00838F;
       }
 
-      .not-good {
+      .infected {
         background-color: #ff8f00;
       }
 
-      .bad {
+      .recovered {
+        background-color: #00c853;
+      }
+
+      .died {
         background-color: #dd2c00;
       }
 
@@ -120,16 +124,20 @@
     <h1>A koronavírus Magyarországon</h1>
     <div class="info-container">
       <div class="info-box">
+        <div class="info-title">Aktív</div>
+        <div class="info-value active-infected"><%= activeInfected %></div>
+      </div>
+      <div class="info-box">
         <div class="info-title">Fertőzött</div>
-        <div class="info-value not-good"><%= infected %></div>
+        <div class="info-value infected"><%= infected %></div>
       </div>
       <div class="info-box">
         <div class="info-title">Gyógyult</div>
-        <div class="info-value good"><%= recovered %></div>
+        <div class="info-value recovered"><%= recovered %></div>
       </div>
       <div class="info-box">
         <div class="info-title">Elhunyt</div>
-        <div class="info-value bad"><%= died %></div>
+        <div class="info-value died"><%= died %></div>
       </div>
     </div>
     <footer>

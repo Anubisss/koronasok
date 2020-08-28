@@ -2,3 +2,5 @@ node_modules/
 .serverless/
 
 npm-debug.log*
+
+.DS_Store

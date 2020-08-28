@@ -67,18 +67,20 @@ const processData = (document) => {
 
   return {
     infected,
+    activeInfected,
     recovered,
     died,
   };
 };
 
-const renderHtml = (infected, recovered, died) => {
-  winston.info('renderHtml', { infected, recovered, died });
+const renderHtml = (infected, activeInfected, recovered, died) => {
+  winston.info('renderHtml', { infected, activeInfected, recovered, died });
 
   const templateData = {
-    infected: infected,
-    recovered: recovered,
-    died: died,
+    infected,
+    activeInfected,
+    recovered,
+    died,
     lastUpdateString: moment().tz('Europe/Budapest').format('YYYY. MM. DD. - HH:mm'),
     gaTrackingId: GA_TRACKING_ID,
   };
@@ -124,7 +126,7 @@ const handler = async (event, context) => {
     const data = await getData();
     const dom = new jsdom.JSDOM(data);
     const processedData = processData(dom.window.document);
-    const html = await renderHtml(processedData.infected, processedData.recovered, processedData.died);
+    const html = await renderHtml(processedData.infected, processedData.activeInfected, processedData.recovered, processedData.died);
     await uploadToS3(s3Client, html);
 
     const historicDataManager = new HistoricDataManager(s3Client, HOST_S3_BUCKET_NAME, HISTORIC_DATA_FILE_NAME);

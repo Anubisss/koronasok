@@ -4,7 +4,7 @@
   "description": "Lambda function that generates content for koronasok.hu which is a website to track infections of Coronavirus disease (COVID-19) in Hungary.",
   "main": "index.js",
   "engines": {
-    "node": "12.15.0"
+    "node": "12.18.2"
   },
   "keywords": [
     "coronavirus",

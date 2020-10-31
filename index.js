@@ -145,8 +145,10 @@ const handler = async (event, context) => {
     const dom = new jsdom.JSDOM(data);
     const processedData = processData(dom.window.document);
     const html = await renderHtml(
-      minifyAndRound(processedData.infected), minifyAndRound(processedData.activeInfected),
-      minifyAndRound(processedData.recovered), minifyAndRound(processedData.died),
+      { value: minifyAndRound(processedData.infected), tooltip: processedData.infected },
+      { value: minifyAndRound(processedData.activeInfected), tooltip: processedData.activeInfected },
+      { value: minifyAndRound(processedData.recovered), tooltip: processedData.recovered },
+      { value: minifyAndRound(processedData.died), tooltip: processedData.died },
     );
     await uploadToS3(s3Client, html);
 

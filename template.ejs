@@ -125,19 +125,19 @@
     <div class="info-container">
       <div class="info-box">
         <div class="info-title">Aktív</div>
-        <div class="info-value active-infected"><%= activeInfected %></div>
+        <div class="info-value active-infected" title="<%= activeInfected.tooltip %>"><%= activeInfected.value %></div>
       </div>
       <div class="info-box">
         <div class="info-title">Fertőzött</div>
-        <div class="info-value infected"><%= infected %></div>
+        <div class="info-value infected" title="<%= infected.tooltip %>"><%= infected.value %></div>
       </div>
       <div class="info-box">
         <div class="info-title">Gyógyult</div>
-        <div class="info-value recovered"><%= recovered %></div>
+        <div class="info-value recovered" title="<%= recovered.tooltip %>"><%= recovered.value %></div>
       </div>
       <div class="info-box">
         <div class="info-title">Elhunyt</div>
-        <div class="info-value died"><%= died %></div>
+        <div class="info-value died" title="<%= died.tooltip %>"><%= died.value %></div>
       </div>
     </div>
     <footer>

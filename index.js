@@ -73,6 +73,24 @@ const processData = (document) => {
   };
 };
 
+const minifyAndRound = (number) => {
+  if (number < 1000) {
+    return number;
+  }
+
+  let roundPrecision = 2;
+  if (number > 100000) {
+    roundPrecision = 0;
+  }
+  else if (number > 10000) {
+    roundPrecision = 1;
+  }
+
+  const minifiedNumber = number / 1000;
+  const roundedNumber = +minifiedNumber.toFixed(roundPrecision);
+  return roundedNumber + 'k';
+};
+
 const renderHtml = (infected, activeInfected, recovered, died) => {
   winston.info('renderHtml', { infected, activeInfected, recovered, died });
 
@@ -126,7 +144,10 @@ const handler = async (event, context) => {
     const data = await getData();
     const dom = new jsdom.JSDOM(data);
     const processedData = processData(dom.window.document);
-    const html = await renderHtml(processedData.infected, processedData.activeInfected, processedData.recovered, processedData.died);
+    const html = await renderHtml(
+      minifyAndRound(processedData.infected), minifyAndRound(processedData.activeInfected),
+      minifyAndRound(processedData.recovered), minifyAndRound(processedData.died),
+    );
     await uploadToS3(s3Client, html);
 
     const historicDataManager = new HistoricDataManager(s3Client, HOST_S3_BUCKET_NAME, HISTORIC_DATA_FILE_NAME);

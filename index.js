@@ -73,9 +73,9 @@ const processData = (document) => {
   };
 };
 
-const minifyAndRound = (number) => {
-  if (number < 1000) {
-    return number;
+const minifyAndRound = (number, appendPlusSign = false) => {
+  if ((number < 1000 && number >= 0) || (number < 0 && number > -1000 )) {
+    return appendPlusSign && number >= 0 ? ('+' + number) : number;
   }
 
   let roundPrecision = 2;
@@ -88,17 +88,21 @@ const minifyAndRound = (number) => {
 
   const minifiedNumber = number / 1000;
   const roundedNumber = +minifiedNumber.toFixed(roundPrecision);
-  return roundedNumber + 'k';
+  return (appendPlusSign && number >= 0 ? '+' : '') + roundedNumber + 'k';
 };
 
-const renderHtml = (infected, activeInfected, recovered, died) => {
-  winston.info('renderHtml', { infected, activeInfected, recovered, died });
+const renderHtml = (infected, activeInfected, recovered, died, infectedDiff, activeInfectedDiff, recoveredDiff, diedDiff) => {
+  winston.info('renderHtml', { infected, activeInfected, recovered, died, infectedDiff, activeInfectedDiff, recoveredDiff, diedDiff });
 
   const templateData = {
     infected,
+    infectedDiff,
     activeInfected,
+    activeInfectedDiff,
     recovered,
+    recoveredDiff,
     died,
+    diedDiff,
     lastUpdateString: moment().tz('Europe/Budapest').format('YYYY. MM. DD. - HH:mm'),
     gaTrackingId: GA_TRACKING_ID,
   };
@@ -144,16 +148,35 @@ const handler = async (event, context) => {
     const data = await getData();
     const dom = new jsdom.JSDOM(data);
     const processedData = processData(dom.window.document);
+
+    const historicDataManager = new HistoricDataManager(s3Client, HOST_S3_BUCKET_NAME, HISTORIC_DATA_FILE_NAME);
+    await historicDataManager.handle(new Date(), processedData.infected, processedData.recovered, processedData.died);
+
+    const yesterdayDataSumm = historicDataManager.summarizeDataForDay(moment().tz('Europe/Budapest').subtract(1, 'days'), true);
+    const todayDataSumm = historicDataManager.summarizeDataForDay(moment().tz('Europe/Budapest'));
+
+    let todayYesterdayInfectedDiff = 0;
+    let todayYesterdayActiveInfectedDiff = 0;
+    let todayYesterdayRecoveredDiff = 0;
+    let todayYesterdayDiedDiff = 0;
+    if (yesterdayDataSumm && todayDataSumm) {
+      todayYesterdayInfectedDiff = todayDataSumm.infected - yesterdayDataSumm.infected;
+      todayYesterdayActiveInfectedDiff = todayDataSumm.activeInfected - yesterdayDataSumm.activeInfected;
+      todayYesterdayRecoveredDiff = todayDataSumm.recovered - yesterdayDataSumm.recovered;
+      todayYesterdayDiedDiff = todayDataSumm.died - yesterdayDataSumm.died;
+    }
+
     const html = await renderHtml(
       { value: minifyAndRound(processedData.infected), tooltip: processedData.infected },
       { value: minifyAndRound(processedData.activeInfected), tooltip: processedData.activeInfected },
       { value: minifyAndRound(processedData.recovered), tooltip: processedData.recovered },
       { value: minifyAndRound(processedData.died), tooltip: processedData.died },
+      { value: minifyAndRound(todayYesterdayInfectedDiff, true), tooltip: todayYesterdayInfectedDiff },
+      { value: minifyAndRound(todayYesterdayActiveInfectedDiff, true), tooltip: todayYesterdayActiveInfectedDiff },
+      { value: minifyAndRound(todayYesterdayRecoveredDiff, true), tooltip: todayYesterdayRecoveredDiff },
+      { value: minifyAndRound(todayYesterdayDiedDiff, true), tooltip: todayYesterdayDiedDiff },
     );
     await uploadToS3(s3Client, html);
-
-    const historicDataManager = new HistoricDataManager(s3Client, HOST_S3_BUCKET_NAME, HISTORIC_DATA_FILE_NAME);
-    await historicDataManager.handle(new Date(), processedData.infected, processedData.recovered, processedData.died);
   } catch (err) {
     winston.error('error occured during page generation', err);
     throw err;

@@ -64,7 +64,7 @@
         margin-bottom: 50px;
       }
 
-      .info-title, .info-value {
+      .info-title {
         width: 50%;
         text-align: center;
       }
@@ -73,10 +73,24 @@
         font-size: 3rem;
       }
 
-      .info-value {
-        font-size: 5rem;
-        color: #ffffff;
+      .info-value-container {
+        display: flex;
+        align-items: center;
+        width: 50%;
         border-radius: 10px;
+        color: #ffffff;
+      }
+
+      .info-value {
+        width: 85%;
+        text-align: center;
+        font-size: 5rem;
+      }
+
+      .info-diff {
+        width: 15%;
+        text-align: center;
+        font-size: 1.2rem;
       }
 
       .active-infected {
@@ -110,34 +124,59 @@
           margin-bottom: 50px;
         }
 
-        .info-box {
+        .info-box, .info-value-container {
           flex-direction: column;
         }
 
-        .info-title, .info-value {
+        .info-title, .info-value-container {
           width: 80%;
         }
+
+        .info-value-container {
+          padding-bottom: 10px;
+        }
+
+        .info-value {
+          width: 100%;
+        }
+
+        .info-diff {
+          font-size: 1.5rem;
+          width: 100%;
+        }
       }
-    </style>
+  </style>
   </head>
   <body>
     <h1>A koronavírus Magyarországon</h1>
     <div class="info-container">
       <div class="info-box">
         <div class="info-title">Aktív</div>
-        <div class="info-value active-infected" title="<%= activeInfected.tooltip %>"><%= activeInfected.value %></div>
+        <div class="info-value-container active-infected">
+          <div class="info-value" title="<%= activeInfected.tooltip %>"><%= activeInfected.value %></div>
+          <div class="info-diff" title="<%= activeInfectedDiff.tooltip %>"><%= activeInfectedDiff.value %></div>
+        </div>
       </div>
       <div class="info-box">
         <div class="info-title">Fertőzött</div>
-        <div class="info-value infected" title="<%= infected.tooltip %>"><%= infected.value %></div>
+        <div class="info-value-container infected">
+          <div class="info-value" title="<%= infected.tooltip %>"><%= infected.value %></div>
+          <div class="info-diff" title="<%= infectedDiff.tooltip %>"><%= infectedDiff.value %></div>
+        </div>
       </div>
       <div class="info-box">
         <div class="info-title">Gyógyult</div>
-        <div class="info-value recovered" title="<%= recovered.tooltip %>"><%= recovered.value %></div>
+        <div class="info-value-container recovered">
+          <div class="info-value" title="<%= recovered.tooltip %>"><%= recovered.value %></div>
+          <div class="info-diff" title="<%= recoveredDiff.tooltip %>"><%= recoveredDiff.value %></div>
+        </div>
       </div>
       <div class="info-box">
         <div class="info-title">Elhunyt</div>
-        <div class="info-value died" title="<%= died.tooltip %>"><%= died.value %></div>
+        <div class="info-value-container died">
+          <div class="info-value" title="<%= died.tooltip %>"><%= died.value %></div>
+          <div class="info-diff" title="<%= diedDiff.tooltip %>"><%= diedDiff.value %></div>
+        </div>
       </div>
     </div>
     <footer>

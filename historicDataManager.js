@@ -1,40 +1,42 @@
 'use strict';
 
 const winston = require('winston');
+const moment = require('moment-timezone');
 
 class HistoricDataManager {
   s3Client;
   hostS3BucketName;
   fileName;
+  data;
 
   constructor(s3Client, hostS3BucketName, fileName) {
     this.s3Client = s3Client;
     this.hostS3BucketName = hostS3BucketName;
     this.fileName = fileName;
+    this.data = null;
   }
 
   async handle(date, infected, recovered, died) {
     winston.info('HistoricDataManager::handle', { date, infected, recovered, died });
 
-    let data;
     if (await this.doesDataFileExist()) {
       const stringData = await this.readDataFileFromS3();
-      data = JSON.parse(stringData.Body);
+      this.data = JSON.parse(stringData.Body);
     }
 
     let needToSave = false;
-    if (data) {
-      if (this.needToAppendData(data, infected, recovered, died)) {
-        this.appendData(data, date, infected, recovered, died);
+    if (this.data) {
+      if (this.needToAppendData(this.data, infected, recovered, died)) {
+        this.appendData(this.data, date, infected, recovered, died);
         needToSave = true;
       }
     } else {
-      data = this.createData(date, infected, recovered, died);
+      this.data = this.createData(date, infected, recovered, died);
       needToSave = true;
     }
 
     if (needToSave) {
-      await this.saveDataFileToS3(data);
+      await this.saveDataFileToS3(this.data);
     }
   }
 
@@ -117,6 +119,30 @@ class HistoricDataManager {
         died,
       },
     ];
+  }
+
+  summarizeDataForDay(date) {
+    winston.info('HistoricDataManager::summarizeDataForDay', { date });
+
+    const result = {};
+
+    const dataInGivenDateDay = this.data.filter((entry) => {
+      const entryDate = moment(entry.date).tz('Europe/Budapest');
+      return date.year() === entryDate.year() && date.month() === entryDate.month() && date.day() === entryDate.day();
+    });
+
+    if (!dataInGivenDateDay.length) {
+      return null;
+    }
+
+    const lastDataInDay = dataInGivenDateDay[dataInGivenDateDay.length - 1];
+
+    result.infected = lastDataInDay.infected;
+    result.activeInfected = lastDataInDay.infected - lastDataInDay.recovered - lastDataInDay.died;
+    result.recovered = lastDataInDay.recovered;
+    result.died = lastDataInDay.died;
+
+    return result;
   }
 }
 

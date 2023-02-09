@@ -1,8 +1,12 @@
 # Koronasok
+The project is no longer maintained and the website is no longer available.
+
 Koronasok is a simple scheduled AWS Lambda function (managed via Serverless) which generates a HTML file and puts it into an AWS S3 bucket.
 It generates content for koronasok.hu which is a website for tracking infections of Coronavirus disease (COVID-19) in Hungary.
 
-Live: https://koronasok.hu/
+The website was here: https://koronasok.hu/
+
+It looked like this: https://i.imgur.com/snVKEJ9.png
 
 ### Note
 This is not an official product. Created for fun and personal usage.
